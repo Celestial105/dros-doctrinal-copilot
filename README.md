@@ -45,6 +45,27 @@ DROS Doctrinal Copilot 是為 DROS (Deterministic Runtime OS) 系統量身打造
 
 ---
 
+## 🚀 核心架構：行動端不對稱熔斷與直連降維技術 (Asymmetric Fallback & Direct Ingestion)
+
+為了克服行動裝置 (iOS/Android) 上的網路限制與硬體瓶頸，DROS Doctrinal Copilot 搭載了專門針對 Mobile 的**智能預處理機制**，無需依賴電腦端的 `127.0.0.1` 代理伺服器即可高效運行：
+
+### 1. 物理安全熔斷與降級 (API Route Refactoring)
+* **痛點**：手機端無法連線至電腦本機的 Python 網關。
+* **機制**：外掛於啟動時自動偵測 `Platform.isMobile`。一旦確認為行動裝置，系統將啟動**物理熔斷**，強制關閉 Proxy 代理模式，並降級為 **Direct 模式 (直連雲端 Google Gemini API)**，確保隨時隨地皆可對話。
+
+### 2. 階梯式 Token 降維看門狗 (Node Dimension Reduction)
+* **痛點**：手機網路頻寬與記憶體有限，載入龐大名相庫易導致卡頓或觸發 Token 上限。
+* **機制**：讀取本地知識節點時，動態計算上下文長度：
+  * 當上下文累計大於 `8,000` 字元時，非核心節點將被**折疊降維至 150 字以內**（僅保留義理路標）。
+  * 當累計大於 `12,000` 字元時，直接捨棄非核心節點，防止撐爆大模型上下文。
+  * 單一節點上限強制封頂 `10,000` 字，自動截斷超長文本。
+
+### 3. 雲端向量 RAG 備援 (NotebookLM Fallback)
+* **痛點**：手機端可能未同步完整的數 GB 大覺藏檔案庫。
+* **機制**：當端側檢索不到有效實心名相時，系統會在背景透過腳本或外掛呼叫 **NotebookLM 雲端向量庫** 進行 fallback 召回，確保在手機上也能獲取高品質的經典證據與脈絡。
+
+---
+
 ## ⚖️ 專利保護與開源聲明 | Patent Notice & License
 
 - **Patent Notice**: DROS execution governance and security technology is protected under U.S. Provisional Patent Application (U.S. PPA No. 64/111,973, Patent Pending).
