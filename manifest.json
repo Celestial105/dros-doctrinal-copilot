@@ -2,8 +2,8 @@
   "id": "dros-doctrinal-copilot",
   "name": "DROS Doctrinal Copilot",
   "version": "1.0.1",
-  "minAppVersion": "0.15.0",
-  "description": "Dharma Reasoning OS companion plugin for dual-track reasoning and doctrinal card anchoring.",
+  "minAppVersion": "1.0.0",
+  "description": "DROS companion plugin for dual-track reasoning and doctrinal card anchoring.",
   "author": "Top Celestial Company Ltd.",
   "authorUrl": "https://github.com/Celestial105",
   "isDesktopOnly": false
