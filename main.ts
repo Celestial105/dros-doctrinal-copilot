@@ -1,7 +1,5 @@
 import { Plugin, WorkspaceLeaf, ItemView, Notice, requestUrl, TFile, Setting, PluginSettingTab, App, addIcon, Platform } from 'obsidian';
 
-declare const require: any;
-
 const VIEW_TYPE_DROS_CHAT = "dros-chat-view";
 
 interface DrosPluginSettings {
@@ -326,34 +324,8 @@ function parseContractYaml(yamlText: string): any {
 }
 
 async function nlmQueryAsync(query: string, notebookName: string): Promise<string> {
-    if (typeof require === "undefined") return "";
-    try {
-        const { exec } = require("child_process");
-        const notebookMapping: Record<string, string> = {
-            "AI佛學總論": "387b899a-2095-4f68-945f-e2fa35c5670b",
-            "AI善導大師-淨土宗": "f0535e46-586a-44e2-bffd-59b12b21e77a",
-            "AI龍樹-中觀": "359f6065-dbec-4e5e-b85d-8377c7eea534",
-            "AI惠能-禪宗": "396d76a0-c781-48fe-8a73-534b1d25fc37",
-            "數位佛堂_3.0": "32e46b09-02f5-42d5-91c7-ca8147ffdcaa",
-            "AI彌勒-唯識宗": "b2a15532-edba-4f18-9565-96ab1ab045d9",
-            "AI智者大師-天台宗": "9b4b3b81-7bd6-492b-9e71-63a1c63a60c4",
-        };
-        const notebookId = notebookMapping[notebookName] || notebookName;
-        return new Promise((resolve) => {
-            exec(`nlm query notebook ${notebookId} "${query.replace(/"/g, '\\"')}"`, (error: any, stdout: string, stderr: any) => {
-                if (error) {
-                    console.warn("NotebookLM RAG fallback failed:", error);
-                    resolve("");
-                } else {
-                    const cleanResult = stdout.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])|\[\*\]|\[\+\]/g, "");
-                    resolve(`\n--- NotebookLM Vector RAG 檢索結果 ---\n${cleanResult}\n`);
-                }
-            });
-        });
-    } catch (e) {
-        console.warn("Child process not available for nlm:", e);
-        return "";
-    }
+    // NotebookLM optional CLI query (Disabled for pure Obsidian API compliance)
+    return "";
 }
 
 async function getLocalNodeContent(app: App, coreNodes: string[], relatedNodes: string[]): Promise<string> {
@@ -1500,13 +1472,17 @@ class DrosSettingTab extends PluginSettingTab {
         guideContent.createEl('h3', { text: t.installTitle });
         const stepsOl = guideContent.createEl('ol');
         t.installSteps.forEach(step => {
-            stepsOl.createEl('li').innerHTML = step;
+            const li = stepsOl.createEl('li');
+            const parts = step.split(/<\/?(?:strong|code)>/);
+            // Safe plain text rendering without innerHTML
+            li.setText(step.replace(/<[^>]+>/g, ''));
         });
 
         guideContent.createEl('h3', { text: t.sopTitle });
         const sopsUl = guideContent.createEl('ul');
         t.sopSteps.forEach(sop => {
-            sopsUl.createEl('li').innerHTML = sop;
+            const li = sopsUl.createEl('li');
+            li.setText(sop.replace(/<[^>]+>/g, ''));
         });
 
         // 🌐 介面語言 / Interface Language
