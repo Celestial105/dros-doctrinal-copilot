@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, ItemView, Notice, requestUrl, TFile, Setting, PluginSettingTab, App, addIcon, Platform } from 'obsidian';
+import { Plugin, WorkspaceLeaf, ItemView, Notice, requestUrl, TFile, Setting, PluginSettingTab, App, addIcon, Platform, getLanguage } from 'obsidian';
 
 const VIEW_TYPE_DROS_CHAT = "dros-chat-view";
 
@@ -1291,7 +1291,7 @@ export default class DrosCopilotPlugin extends Plugin {
         if (mode === "en") return "EN";
         
         try {
-            const obsLang = (window.localStorage.getItem("language") || "en").toLowerCase();
+            const obsLang = getLanguage().toLowerCase();
             if (obsLang.includes("zh")) {
                 return "ZH";
             }
@@ -1330,7 +1330,6 @@ export default class DrosCopilotPlugin extends Plugin {
         this.addCommand({
             id: 'dros-quick-lookup',
             name: 'DROS：就地義理定錨與查詢 / Doctrinal Anchoring',
-            hotkeys: [{ modifiers: ["Alt"], key: "d" }],
             editorCallback: async (editor, view) => {
                 const selectedText = editor.getSelection().trim();
                 
@@ -1421,7 +1420,7 @@ export default class DrosCopilotPlugin extends Plugin {
 
     async activateView() {
         this.app.workspace.detachLeavesOfType(VIEW_TYPE_DROS_CHAT);
-        await this.app.workspace.getRightLeaf(false).setViewState({
+        await this.app.workspace.getLeaf(true).setViewState({
             type: VIEW_TYPE_DROS_CHAT,
             active: true,
         });

@@ -1193,7 +1193,7 @@ class DrosCopilotPlugin extends obsidian_1.Plugin {
         if (mode === "en")
             return "EN";
         try {
-            const obsLang = (window.localStorage.getItem("language") || "en").toLowerCase();
+            const obsLang = (0, obsidian_1.getLanguage)().toLowerCase();
             if (obsLang.includes("zh")) {
                 return "ZH";
             }
@@ -1228,7 +1228,6 @@ class DrosCopilotPlugin extends obsidian_1.Plugin {
         this.addCommand({
             id: 'dros-quick-lookup',
             name: 'DROS：就地義理定錨與查詢 / Doctrinal Anchoring',
-            hotkeys: [{ modifiers: ["Alt"], key: "d" }],
             editorCallback: async (editor, view) => {
                 const selectedText = editor.getSelection().trim();
                 // 動態獲取當前語言
@@ -1317,7 +1316,7 @@ class DrosCopilotPlugin extends obsidian_1.Plugin {
     }
     async activateView() {
         this.app.workspace.detachLeavesOfType(VIEW_TYPE_DROS_CHAT);
-        await this.app.workspace.getRightLeaf(false).setViewState({
+        await this.app.workspace.getLeaf(true).setViewState({
             type: VIEW_TYPE_DROS_CHAT,
             active: true,
         });
