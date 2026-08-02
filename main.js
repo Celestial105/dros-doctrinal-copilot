@@ -1341,7 +1341,9 @@ class DrosSettingTab extends obsidian_1.PluginSettingTab {
         containerEl.empty();
         const lang = this.plugin.getEffectiveLang();
         const t = LOCALIZATION[lang].settings;
-        containerEl.createEl('h2', { text: t.tabTitle });
+        new obsidian_1.Setting(containerEl)
+            .setName(t.tabTitle)
+            .setHeading();
         // 📖 隨身使用手冊與安裝指引 (Quick Start Guide & Installation Steps)
         const guideDetails = containerEl.createEl('details', {
             cls: 'dros-settings-guide-container',
@@ -1352,15 +1354,18 @@ class DrosSettingTab extends obsidian_1.PluginSettingTab {
             cls: 'dros-settings-guide-summary'
         });
         const guideContent = guideDetails.createDiv({ cls: 'dros-settings-guide-content' });
-        guideContent.createEl('h3', { text: t.installTitle });
+        new obsidian_1.Setting(guideContent)
+            .setName(t.installTitle)
+            .setHeading();
         const stepsOl = guideContent.createEl('ol');
         t.installSteps.forEach(step => {
             const li = stepsOl.createEl('li');
-            const parts = step.split(/<\/?(?:strong|code)>/);
             // Safe plain text rendering without innerHTML
             li.setText(step.replace(/<[^>]+>/g, ''));
         });
-        guideContent.createEl('h3', { text: t.sopTitle });
+        new obsidian_1.Setting(guideContent)
+            .setName(t.sopTitle)
+            .setHeading();
         const sopsUl = guideContent.createEl('ul');
         t.sopSteps.forEach(sop => {
             const li = sopsUl.createEl('li');
