@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   build:
@@ -25,9 +27,32 @@ jobs:
           npm ci
           npm run build
 
+      - name: Attest release assets
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          body: |
+            ## DROS Doctrinal Copilot ${{ github.ref_name }}
+
+            Maintenance release for Obsidian community plugin review compliance.
+
+            ### Changes
+            - Updates plugin metadata and package version.
+            - Declares Obsidian `minAppVersion` 1.8.7, matching the `getLanguage()` API requirement.
+            - Keeps the compatible leaf-opening flow and avoids a default hotkey.
+            - Publishes release assets with GitHub artifact attestations.
+            - Keeps README documentation in bilingual English / Traditional Chinese format.
+
+            ### Notes
+            - This release does not introduce major feature changes.
+            - Release assets: `main.js`, `manifest.json`, `styles.css`.
           files: |
             main.js
             manifest.json

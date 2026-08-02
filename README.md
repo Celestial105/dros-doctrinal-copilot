@@ -48,13 +48,13 @@ Common settings include:
 
 ### Compatibility
 
-- Version: 1.0.5
-- Minimum Obsidian version: 1.5.0
+- Version: 1.0.6
+- Minimum Obsidian version: 1.8.7
 
-### Release notes for v1.0.5
+### Release notes for v1.0.6
 
 - refreshed the README into a clean bilingual format
-- updated the release metadata to version 1.0.5
+- updated the release metadata to version 1.0.6
 - kept minAppVersion aligned with the plugin's compatibility requirements
 - removed the default hotkey to reduce shortcut conflicts
 - switched language detection to Obsidian's getLanguage() helper
@@ -104,13 +104,13 @@ DROS Doctrinal Copilot 可協助你：
 
 ### 相容性
 
-- 版本: 1.0.5
-- 最低 Obsidian 版本: 1.5.0
+- 版本: 1.0.6
+- 最低 Obsidian 版本: 1.8.7
 
-### v1.0.5 更新說明
+### v1.0.6 更新說明
 
 - 將 README 整理為乾淨的中英文雙語版
-- 更新發佈中繼資料與版本至 1.0.5
+- 更新發佈中繼資料與版本至 1.0.6
 - 維持 minAppVersion 與外掛相容性需求一致
 - 移除預設 hotkey，降低快捷鍵衝突
 - 改用 Obsidian 的 getLanguage() 進行語言偵測
