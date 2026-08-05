@@ -19,11 +19,10 @@ DROS Doctrinal Copilot helps you:
 
 ### Install
 
-1. Copy this folder into your vault at:
-   `YOUR_VAULT/.obsidian/plugins/dros-doctrinal-copilot/`
-2. Restart Obsidian.
-3. Open Settings -> Community plugins and enable DROS Doctrinal Copilot.
-4. Open the plugin settings and configure your backend mode and API keys.
+1. Open Obsidian -> Settings -> **Community plugins**.
+2. Turn off Restricted Mode, click **Browse**, and search for **DROS Doctrinal Copilot**.
+3. Click **Install** and then **Enable**.
+4. Open the plugin settings and configure your engine mode (Direct / Custom / Proxy) and API keys.
 
 ### Start the backend
 
@@ -75,11 +74,10 @@ DROS Doctrinal Copilot 可協助你：
 
 ### 安裝
 
-1. 將此資料夾複製到你的 Vault：
-   `YOUR_VAULT/.obsidian/plugins/dros-doctrinal-copilot/`
-2. 重新啟動 Obsidian。
-3. 前往 Settings -> Community plugins，啟用 DROS Doctrinal Copilot。
-4. 開啟外掛設定，完成後端模式與 API 金鑰設定。
+1. 開啟 Obsidian -> 設定 (Settings) -> **社群外掛程式 (Community plugins)**。
+2. 關閉限制模式 (Restricted Mode)，點擊 **瀏覽 (Browse)**，搜尋 **DROS Doctrinal Copilot**。
+3. 點擊 **安裝 (Install)** 並點擊 **啟用 (Enable)**！
+4. 開啟外掛設定頁面，設定引擎模式 (Direct 直連 / Custom 自訂 / Proxy 本地代理) 與 API 金鑰即可開始使用。
 
 ### 啟動後端
 
