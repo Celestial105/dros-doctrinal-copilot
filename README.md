@@ -19,10 +19,11 @@ DROS Doctrinal Copilot helps you:
 
 ### Install
 
-1. Open Obsidian -> Settings -> **Community plugins**.
-2. Turn off Restricted Mode, click **Browse**, and search for **DROS Doctrinal Copilot**.
-3. Click **Install** and then **Enable**.
-4. Open the plugin settings and configure your engine mode (Direct / Custom / Proxy) and API keys.
+1. Copy this folder into your vault at:
+   `YOUR_VAULT/.obsidian/plugins/dros-doctrinal-copilot/`
+2. Restart Obsidian.
+3. Open Settings -> Community plugins and enable DROS Doctrinal Copilot.
+4. Open the plugin settings and configure your backend mode and API keys.
 
 ### Start the backend
 
@@ -47,53 +48,51 @@ Common settings include:
 
 ### Compatibility
 
-- Version: 1.0.6
+- Version: 1.0.7
 - Minimum Obsidian version: 1.8.7
 
-### Release notes for v1.0.6
+### Release notes for v1.0.7
 
-- refreshed the README into a clean bilingual format
-- updated the release metadata to version 1.0.6
-- kept minAppVersion aligned with the plugin's compatibility requirements
-- removed the default hotkey to reduce shortcut conflicts
-- switched language detection to Obsidian's getLanguage() helper
-- replaced newer workspace usage with a compatible leaf-opening flow
+- Implemented Canonical Passage Penetration Locator: Automatically extracts exact textual passage spans (span:start-end) and T-Number coordinates from long classics (e.g. T0279) when standalone concept notes are absent.
+- Enforced Strict Vajra Non-Degradation: Vajra mode strictly prohibits silent fallback to Bodhisattva mode or unauthorized analogies, guaranteeing zero-hallucination canonical grounding.
+- Query candidate expansion: Fully incorporates raw queries into candidate discovery for complete doctrinal coverage.
 
 ---
 
 ## 繁體中文
 
-### 功能說明
+### 功能簡介
 
-DROS Doctrinal Copilot 可協助你：
-- 將選取文字或筆記錨定到義理脈絡
-- 連線本機 DROS 後端或直接呼叫 LLM 端點
-- 產生結構化的義理綜述
-- 將結果回寫到 Vault，形成 pavilion note
-- 在中文與英文輸出模式之間切換
+DROS Doctrinal Copilot 提供以下能力：
+- 將選取文字或筆記錨定至法義上下文
+- 查詢本機 DROS 後端或直連 LLM 端點
+- 產出結構化法義摘要與金剛推演
+- 將結果儲存回 Vault 的 user_pavilion 筆記
+- 支援中英文輸出雙軌切換
 
-### 安裝
+### 安裝方式
 
-1. 開啟 Obsidian -> 設定 (Settings) -> **社群外掛程式 (Community plugins)**。
-2. 關閉限制模式 (Restricted Mode)，點擊 **瀏覽 (Browse)**，搜尋 **DROS Doctrinal Copilot**。
-3. 點擊 **安裝 (Install)** 並點擊 **啟用 (Enable)**！
-4. 開啟外掛設定頁面，設定引擎模式 (Direct 直連 / Custom 自訂 / Proxy 本地代理) 與 API 金鑰即可開始使用。
+1. 將本資料夾複製到您的 Vault：
+   `您的VAULT/.obsidian/plugins/dros-doctrinal-copilot/`
+2. 重啟 Obsidian。
+3. 開啟 設定 -> 社群外掛，啟用 DROS Doctrinal Copilot。
+4. 在外掛設定中調整您的後端模式與 API Key。
 
 ### 啟動後端
 
-若你使用 DROS backend 模式，請先啟動本機 injector / backend service。
-依照目前工作區慣例，通常是你的 DROS 啟動器或 injector 腳本。
+若使用 DROS 後端模式，請先啟動本機注入服務。
+在此工作區中，通常是您環境所用的 DROS launcher 或注射器腳本。
 
-### 使用方式
+### 使用方法
 
-- 從 command palette 執行 DROS Doctrinal Copilot 相關指令。
-- 在 chat 視圖中詢問義理問題或整理段落。
-- 按下儲存按鈕，將結果存成 pavilion note。
-- 使用 anchor 指令，把選取內容連結到其義理脈絡。
+- 開啟命令面板，執行 DROS Doctrinal Copilot 相關命令。
+- 使用對話檢視詢問法義問題或綜述經文段落。
+- 使用儲存按鈕將產生的內容存為 pavilion 筆記。
+- 使用錨定命令將選取範圍連接至其法義上下文。
 
 ### 設定項目
 
-常見設定包含：
+常見設定包括：
 - 語言模式: auto / zh / en
 - 引擎模式: direct / proxy / custom
 - Prompt 注入: contract, nodes, runtime mode
@@ -102,17 +101,14 @@ DROS Doctrinal Copilot 可協助你：
 
 ### 相容性
 
-- 版本: 1.0.6
+- 版本: 1.0.7
 - 最低 Obsidian 版本: 1.8.7
 
-### v1.0.6 更新說明
+### v1.0.7 更新說明
 
-- 將 README 整理為乾淨的中英文雙語版
-- 更新發佈中繼資料與版本至 1.0.6
-- 維持 minAppVersion 與外掛相容性需求一致
-- 移除預設 hotkey，降低快捷鍵衝突
-- 改用 Obsidian 的 getLanguage() 進行語言偵測
-- 將較新的 workspace 用法改成相容的 leaf 開啟流程
+- **實裝長經典物理段落穿透檢索（Passage Penetration Locator）**：當名相筆記不存在時，自動穿透長經典全文（如 T0279）精確標定原典經文切片與 `span` 物理字元座標。
+- **鋼性落實金剛模式不降級（Strict Vajra Non-Degradation）**：徹底封堵「查無獨立筆記即偷降級至菩薩模式」的漏洞，全面阻斷電視遙控器等現代比喻與大模型幻覺。
+- **全量擴展候選關鍵詞**：Stage 1 自動納入使用者提問原始全文，確保經文偈頌完整命中。
 
 ---
 

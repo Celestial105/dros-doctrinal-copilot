@@ -416,6 +416,39 @@ async function getLocalNodeContent(app, coreNodes, relatedNodes) {
             await readAndProcessFile(file, false);
         }
     }
+    // DROS v8.0 長經典物理穿透：若常規名相筆記未命中，自動在長經典中進行經文段落切片定位
+    if (!context || !context.trim()) {
+        const candidateTerms = [...coreNodes, ...relatedNodes];
+        for (const file of files) {
+            if (file.path.toLowerCase().startsWith("core/long_classics/") && file.extension === "md" && !file.basename.includes("PageIndex")) {
+                try {
+                    const content = await app.vault.read(file);
+                    for (const term of candidateTerms) {
+                        const cleanTerm = term.replace(/[^\u4e00-\u9fa5]/g, "");
+                        if (cleanTerm.length >= 4) {
+                            const matchIdx = content.indexOf(cleanTerm);
+                            if (matchIdx !== -1) {
+                                const pStart = Math.max(0, content.lastIndexOf("\n\n", matchIdx));
+                                const pEnd = content.indexOf("\n\n", matchIdx + cleanTerm.length);
+                                const sliceEnd = pEnd !== -1 ? pEnd : matchIdx + 400;
+                                const passageSlice = content.substring(pStart, sliceEnd).trim();
+                                context += `\n--- 節點: ${file.basename} (物理切片穿透) ---\n`;
+                                context += `> [!QUOTE] 原典引文 (T-Number Canonical Anchor)\n`;
+                                context += `> 出處典籍: ${file.basename}\n`;
+                                context += `> 物理字元座標: span:${pStart}-${sliceEnd}\n`;
+                                context += `> 檢索命中詞: 「${cleanTerm}」\n`;
+                                context += passageSlice.split("\n").map(l => `> ${l}`).join("\n") + "\n";
+                                break;
+                            }
+                        }
+                    }
+                    if (context.trim()) break;
+                } catch (e) {
+                    console.error("[DROS Engine] Long classics penetration error:", e);
+                }
+            }
+        }
+    }
     return context;
 }
 function getEffectiveConfig(settings) {
@@ -600,9 +633,10 @@ async function queryDrosEngine(query, contractId, customPromptContent, lang, app
                 console.log("[Dros Core] 無 Gemini API Key，跳過 Stage 1 路由，直接進行全庫定錨。");
             }
         }
+        const queryCandidates = [query, ...(plan.core_nodes || [])];
         let context = "";
         try {
-            context = await getLocalNodeContent(app, plan.core_nodes || [], plan.related_nodes || []);
+            context = await getLocalNodeContent(app, queryCandidates, plan.related_nodes || []);
         }
         catch (e) {
             console.error("[DROS JS Engine] Node ingestion failed:", e);
@@ -632,9 +666,17 @@ async function queryDrosEngine(query, contractId, customPromptContent, lang, app
                 contractData = parseContractYaml(yamlText);
             }
             if (contractData) {
+                const isVajraContract = (contractData.InferenceMode === "Vajra" || contractId.includes("vajra"));
                 if (hasStrongAuthority) {
                     runtimeMode = contractData.InferenceMode || "Bodhisattva";
                     temperature = contractData.Temperature !== undefined ? contractData.Temperature : 0.2;
+                    if (contractData.Model)
+                        modelToUse = contractData.Model;
+                }
+                else if (isVajraContract) {
+                    // DROS 認識論憲章：金剛模式絕不軟弱降級為菩薩模式，維持 Vajra 鐵血熔斷標準
+                    runtimeMode = "Vajra";
+                    temperature = 0.05;
                     if (contractData.Model)
                         modelToUse = contractData.Model;
                 }
