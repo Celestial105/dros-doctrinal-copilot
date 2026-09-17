@@ -1,214 +1,600 @@
 /* ==========================================================================
-   DROS Doctrinal Copilot - Adaptive Dual-Theme Styling (v1.0.8)
-   Seamless support for both Obsidian Light and Dark themes
+   DROS Doctrinal Copilot Stylesheet - Adaptive Dual-Theme (v1.0.8)
+   Preserves original exact DOM layout, controls, buttons, and badges,
+   while dynamically adapting colors & contrast for Light and Dark themes.
    ========================================================================== */
 
-/* Base Container */
-.dros-copilot-container {
+/* 1. 外層容器 - 保持原結構與圓角，顏色自適應 */
+.dros-copilot-wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
-    font-family: var(--font-text, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
-    color: var(--text-normal);
-    background-color: var(--background-primary);
-    overflow: hidden;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: var(--font-interface);
+    transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-/* Header */
+/* 深色模式外觀 */
+.theme-dark .dros-copilot-wrapper {
+    background: rgba(22, 22, 22, 0.65) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02), 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* 淺色模式外觀：純淨白瓷、溫和邊框、柔和陰影 */
+.theme-light .dros-copilot-wrapper {
+    background: var(--background-primary, #ffffff) !important;
+    border: 1px solid var(--background-modifier-border, #e2e8f0);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* 2. 標題欄 Header */
 .dros-copilot-header {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--background-modifier-border);
-    background-color: var(--background-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--background-modifier-border, rgba(255, 255, 255, 0.08));
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.dros-copilot-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.theme-dark .dros-copilot-header h3 {
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+}
+
+.theme-light .dros-copilot-header h3 {
+    color: #b45309; /* 沉穩暖金褐 */
+    text-shadow: none;
+    font-weight: 700;
+}
+
+/* 3. 模式切換器 (金剛 / 菩薩) */
+.dros-mode-selector {
+    display: flex;
+    gap: 4px;
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid var(--background-modifier-border, rgba(255, 255, 255, 0.05));
+}
+
+.theme-dark .dros-mode-selector {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.theme-light .dros-mode-selector {
+    background: var(--background-secondary, #f1f5f9);
+}
+
+.dros-mode-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.8em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.theme-dark .dros-mode-btn {
+    color: #888;
+}
+
+.theme-dark .dros-mode-btn:hover {
+    color: #ddd;
+}
+
+.theme-dark .dros-mode-btn.active {
+    background: rgba(255, 215, 0, 0.15) !important;
+    color: #ffd700 !important;
+    font-weight: bold;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.15);
+}
+
+.theme-light .dros-mode-btn {
+    color: #64748b;
+}
+
+.theme-light .dros-mode-btn:hover {
+    color: #0f172a;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.theme-light .dros-mode-btn.active {
+    background: #ffffff !important;
+    color: #b45309 !important;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* 4. 🌐 語言切換按鈕 */
+.dros-lang-toggle-btn {
+    font-size: 0.76em !important;
+    padding: 3px 8px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 500 !important;
+}
+
+.theme-dark .dros-lang-toggle-btn {
+    background: rgba(255, 215, 0, 0.05) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    color: #ffd700 !important;
+}
+
+.theme-dark .dros-lang-toggle-btn:hover {
+    background: rgba(255, 215, 0, 0.18) !important;
+    border-color: rgba(255, 215, 0, 0.35) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.25) !important;
+}
+
+.theme-light .dros-lang-toggle-btn {
+    background: var(--background-secondary, #f8fafc) !important;
+    border: 1px solid var(--background-modifier-border, #cbd5e1) !important;
+    color: #475569 !important;
+}
+
+.theme-light .dros-lang-toggle-btn:hover {
+    background: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+}
+
+/* 5. 聊天記錄滾動區 */
+.dros-message-list {
+    flex-grow: 1;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 12px;
+    padding-right: 4px;
+    margin-bottom: 10px;
 }
 
-.dros-copilot-title-row {
+/* 6. 聊天氣泡 */
+.dros-chat-bubble {
+    display: flex;
+    gap: 8px;
+    animation: fadeInBubble 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes fadeInBubble {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dros-chat-bubble.user {
+    flex-direction: row-reverse;
+}
+
+.dros-chat-bubble .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    font-size: 0.9em;
+    flex-shrink: 0;
 }
 
-.dros-copilot-title-row h4 {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-accent, #d97706);
-    letter-spacing: 0.5px;
+.theme-dark .dros-chat-bubble .avatar {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.dros-copilot-subtitle {
-    font-size: 0.78rem;
-    color: var(--text-muted);
+.theme-dark .dros-chat-bubble.assistant .avatar {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-/* Messages Scroll Area */
-.dros-copilot-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
+.theme-light .dros-chat-bubble .avatar {
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+}
+
+.theme-light .dros-chat-bubble.assistant .avatar {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+}
+
+.dros-chat-bubble .bubble-container {
+    max-width: 85%;
     display: flex;
     flex-direction: column;
-    gap: 14px;
 }
 
-/* Message Bubble Shared */
-.dros-message {
-    padding: 12px 14px;
+.dros-chat-bubble .content {
+    padding: 10px 12px;
     border-radius: 8px;
-    line-height: 1.55;
-    font-size: 0.9rem;
-    max-width: 95%;
+    font-size: 0.95em;
+    line-height: 1.5;
     word-break: break-word;
-    border: 1px solid var(--background-modifier-border);
+    white-space: pre-wrap;
 }
 
-/* User Message */
-.dros-message.user {
-    align-self: flex-end;
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent, #ffffff);
-    border-color: transparent;
+/* 深色泡泡文字 */
+.theme-dark .dros-chat-bubble.user .content {
+    background: rgba(0, 128, 128, 0.25);
+    color: #e0f2f1;
+    border: 1px solid rgba(0, 128, 128, 0.35);
+    border-top-right-radius: 2px;
+}
+
+.theme-dark .dros-chat-bubble.assistant .content {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top-left-radius: 2px;
+}
+
+.theme-dark .dros-chat-bubble.assistant.shimmering .content {
+    background: rgba(255, 215, 0, 0.06) !important;
+    border: 1px solid rgba(255, 215, 0, 0.18) !important;
+    color: #ffd700 !important;
+    animation: zenBreathing 1.8s ease-in-out infinite;
+}
+
+/* 淺色泡泡文字 - 徹底擺脫灰濛，清晰高對比 */
+.theme-light .dros-chat-bubble.user .content {
+    background: #0d9488; /* 雅致湖水綠藍 */
+    color: #ffffff;
+    border: 1px solid #0f766e;
+    border-top-right-radius: 2px;
+}
+
+.theme-light .dros-chat-bubble.assistant .content {
+    background: #f8fafc;
+    color: #1e293b; /* 炭黑高可讀性 */
+    border: 1px solid #e2e8f0;
+    border-top-left-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.theme-light .dros-chat-bubble.assistant.shimmering .content {
+    background: #fffbeb !important;
+    border: 1px solid #fcd34d !important;
+    color: #b45309 !important;
+    animation: zenBreathing 1.8s ease-in-out infinite;
+}
+
+@keyframes zenBreathing {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1.0; }
+}
+
+/* 7. 訊息卡片動作欄 (存入館藏) */
+.dros-message-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px dashed var(--background-modifier-border, rgba(255, 255, 255, 0.06));
+}
+
+.dros-save-note-btn {
+    font-size: 0.78em !important;
+    padding: 3px 8px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+}
+
+.theme-dark .dros-save-note-btn {
+    background: rgba(255, 215, 0, 0.06) !important;
+    border: 1px solid rgba(255, 215, 0, 0.15) !important;
+    color: #ffd700 !important;
+}
+
+.theme-dark .dros-save-note-btn:hover {
+    background: rgba(255, 215, 0, 0.18) !important;
+    border-color: rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.2) !important;
+}
+
+.theme-light .dros-save-note-btn {
+    background: #fef3c7 !important;
+    border: 1px solid #fde68a !important;
+    color: #b45309 !important;
     font-weight: 500;
 }
 
-/* Assistant Message */
-.dros-message.assistant {
-    align-self: flex-start;
-    background-color: var(--background-primary-alt, var(--background-secondary));
-    color: var(--text-normal);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+.theme-light .dros-save-note-btn:hover {
+    background: #fde68a !important;
+    border-color: #f59e0b !important;
 }
 
-/* Theme Adaptive Specifics */
-.theme-light .dros-message.assistant {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    color: #1e293b;
-}
-
-.theme-dark .dros-message.assistant {
-    background-color: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #f1f5f9;
-}
-
-/* Metadata & Badges */
-.dros-canonical-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 4px;
+/* 8. 控制列 (連結當前編輯筆記) */
+.dros-control-bar {
+    padding: 4px 0;
     margin-bottom: 6px;
-    background: rgba(217, 119, 6, 0.12);
-    color: #d97706;
-    border: 1px solid rgba(217, 119, 6, 0.25);
 }
 
-.theme-dark .dros-canonical-badge {
-    background: rgba(245, 158, 11, 0.18);
-    color: #fbbf24;
-    border-color: rgba(245, 158, 11, 0.35);
-}
-
-.dros-citations {
-    margin-top: 10px;
-    padding-top: 8px;
-    border-top: 1px dashed var(--background-modifier-border);
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.dros-citation-tag {
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 3px;
-    margin: 2px 4px 2px 0;
-    font-size: 0.75rem;
-    background-color: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
-}
-
-/* Input Area */
-.dros-copilot-input-area {
-    padding: 12px 16px 16px;
-    border-top: 1px solid var(--background-modifier-border);
-    background-color: var(--background-secondary);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.dros-copilot-textarea {
+.dros-inject-btn {
     width: 100%;
-    min-height: 68px;
-    max-height: 180px;
-    resize: vertical;
-    padding: 8px 10px;
-    font-family: inherit;
-    font-size: 0.88rem;
-    line-height: 1.45;
+    font-size: 0.8em;
+    padding: 6px;
     border-radius: 6px;
-    background-color: var(--background-primary);
-    color: var(--text-normal);
-    border: 1px solid var(--background-modifier-border);
-    outline: none;
-    transition: border-color 0.15s ease;
+    cursor: pointer;
+    transition: all 0.25s ease;
 }
 
-.dros-copilot-textarea:focus {
-    border-color: var(--interactive-accent);
+.theme-dark .dros-inject-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #aaa;
 }
 
-.dros-copilot-actions {
+.theme-dark .dros-inject-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.theme-dark .dros-inject-btn.active {
+    background: rgba(0, 128, 128, 0.15) !important;
+    border: 1px solid rgba(0, 128, 128, 0.3) !important;
+    color: #4db6ac !important;
+    font-weight: bold;
+}
+
+.theme-light .dros-inject-btn {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+.theme-light .dros-inject-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.theme-light .dros-inject-btn.active {
+    background: #ccfbf1 !important;
+    border: 1px solid #5eead4 !important;
+    color: #0f766e !important;
+    font-weight: bold;
+}
+
+/* 9. 輸入區域 (經典 Grid: textarea 1fr, 送出按鈕, 清除按鈕) */
+.dros-input-area {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.theme-dark .dros-input-area {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-light .dros-input-area {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+}
+
+.dros-input-area textarea {
+    background: transparent !important;
+    border: none !important;
+    resize: none;
+    font-size: 0.85em;
+    padding: 4px;
+    height: 38px;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.theme-dark .dros-input-area textarea {
+    color: #e0e0e0;
+}
+
+.theme-light .dros-input-area textarea {
+    color: #0f172a;
+}
+
+.dros-input-area textarea::placeholder {
+    color: var(--text-muted, #94a3b8);
+}
+
+/* 發送與清除按鈕 */
+.dros-send-btn, .dros-clear-btn {
+    font-size: 0.8em;
+    padding: 0 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s ease;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dros-copilot-btn {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 6px 14px;
-    font-size: 0.85rem;
+}
+
+/* 發送按鈕 */
+.theme-dark .dros-send-btn {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+}
+
+.theme-dark .dros-send-btn:hover {
+    background: rgba(255, 215, 0, 0.25);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+.theme-light .dros-send-btn {
+    background: #d97706;
+    border: 1px solid #b45309;
+    color: #ffffff;
     font-weight: 600;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent, #ffffff);
-    border: none;
-    transition: opacity 0.15s ease;
 }
 
-.dros-copilot-btn:hover {
-    opacity: 0.9;
+.theme-light .dros-send-btn:hover {
+    background: #b45309;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.dros-copilot-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+/* ⏹ 取消模式：按鈕變紅色系，帶 pulse 提示 */
+.dros-send-btn.dros-cancel-mode {
+    background: rgba(220, 60, 60, 0.15) !important;
+    border: 1px solid rgba(220, 80, 80, 0.4) !important;
+    color: #ff7070 !important;
+    animation: dros-cancel-pulse 1.6s ease-in-out infinite;
 }
 
-/* Markdown Rendering in Assistant Message */
-.dros-message.assistant p {
-    margin: 0 0 8px;
+.theme-light .dros-send-btn.dros-cancel-mode {
+    background: #fee2e2 !important;
+    border: 1px solid #f87171 !important;
+    color: #b91c1c !important;
 }
-.dros-message.assistant p:last-child {
-    margin-bottom: 0;
+
+.dros-send-btn.dros-cancel-mode:hover {
+    background: rgba(220, 60, 60, 0.35) !important;
+    box-shadow: 0 0 10px rgba(220, 60, 60, 0.4) !important;
+    animation: none;
 }
-.dros-message.assistant ul, .dros-message.assistant ol {
-    margin: 4px 0 8px 18px;
-    padding: 0;
+
+@keyframes dros-cancel-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
 }
-.dros-message.assistant code {
-    font-size: 0.82em;
-    padding: 2px 4px;
-    border-radius: 3px;
-    background: var(--background-secondary);
+
+/* 清除按鈕 */
+.theme-dark .dros-clear-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #aaa;
+}
+
+.theme-dark .dros-clear-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.theme-light .dros-clear-btn {
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+.theme-light .dros-clear-btn:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+}
+
+/* 10. 🔓 DROS 物理文字解鎖 - 強制打破 Obsidian 側邊欄與上層所有容器的文字複製限制 */
+.workspace-leaf-content[data-type="dros-chat-view"],
+.workspace-leaf-content[data-type="dros-chat-view"] *,
+.dros-copilot-wrapper,
+.dros-copilot-wrapper *,
+.dros-chat-bubble,
+.dros-chat-bubble * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+}
+
+/* 11. 設定面板的快速指引手冊 */
+.dros-settings-guide-container {
+    border-radius: 8px !important;
+    margin-bottom: 20px !important;
+    padding: 10px 14px !important;
+    transition: all 0.3s ease;
+}
+
+.theme-dark .dros-settings-guide-container {
+    background: rgba(255, 215, 0, 0.03) !important;
+    border: 1px solid rgba(255, 215, 0, 0.12) !important;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.01);
+}
+
+.theme-dark .dros-settings-guide-container[open] {
+    background: rgba(255, 215, 0, 0.05) !important;
+    border-color: rgba(255, 215, 0, 0.22) !important;
+}
+
+.theme-light .dros-settings-guide-container {
+    background: #fefce8 !important;
+    border: 1px solid #fef08a !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.theme-light .dros-settings-guide-container[open] {
+    background: #fef9c3 !important;
+    border-color: #fde047 !important;
+}
+
+.dros-settings-guide-summary {
+    font-weight: bold !important;
+    cursor: pointer !important;
+    outline: none !important;
+    user-select: none !important;
+    font-size: 1.05em !important;
+}
+
+.theme-dark .dros-settings-guide-summary {
+    color: #ffd700 !important;
+}
+
+.theme-light .dros-settings-guide-summary {
+    color: #a16207 !important;
+}
+
+.dros-settings-guide-content {
+    margin-top: 12px !important;
+    font-size: 0.9em !important;
+    line-height: 1.65 !important;
+    color: var(--text-muted) !important;
+}
+
+.dros-settings-guide-content h3 {
+    margin: 14px 0 6px 0 !important;
+    color: var(--text-normal) !important;
+    font-size: 1.02em !important;
+    border-bottom: 1px solid var(--background-modifier-border, rgba(255, 255, 255, 0.06));
+    padding-bottom: 4px;
+}
+
+.dros-settings-guide-content ol, .dros-settings-guide-content ul {
+    margin: 6px 0 12px 0 !important;
+    padding-left: 20px !important;
+}
+
+.dros-settings-guide-content li {
+    margin-bottom: 6px !important;
+}
+
+.dros-settings-guide-content code {
+    padding: 2px 5px !important;
+    border-radius: 4px !important;
+    font-family: monospace !important;
+}
+
+.theme-dark .dros-settings-guide-content code {
+    background: rgba(0, 0, 0, 0.25) !important;
+    color: #4db6ac !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.theme-light .dros-settings-guide-content code {
+    background: #f1f5f9 !important;
+    color: #0f766e !important;
+    border: 1px solid #cbd5e1 !important;
 }
