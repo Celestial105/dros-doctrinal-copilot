@@ -58,8 +58,8 @@ const LOCALIZATION = {
             guideTitle: "📖 快速使用指南與安裝步驟 | Quick Start & Installation Guide",
             installTitle: "📥 簡易安裝三步驟 | Simple 3-Step Installation",
             installSteps: [
-                "<strong>啟用外掛</strong>：進入 <code>設定 (Settings)</code> -> <code>社群外掛載入 (Community Plugins)</code>，找到 <strong>DROS Doctrinal Copilot</strong> 並點擊啟用。",
-                "<strong>啟動本地後端</strong>：前往專案根目錄，執行 <code>雙擊執行-DROS金剛注射器.bat</code> 啟動本地知識守護後端服務（若採 Gemini 直連模式則免此步）。",
+                "<strong>啟用外掛</strong>：進入 <code>設定 (Settings)</code> -> <code>社群外掛程式 (Community Plugins)</code>，找到 <strong>DROS Doctrinal Copilot</strong> 並點擊啟用。",
+                "<strong>填入 API Key</strong>：點擊齒輪設定，在 <code>Gemini API Key</code> 欄位貼上金鑰（純 TypeScript 原生架構，免安裝 Python）。",
                 "<strong>喚醒伴學面板</strong>：點擊 Obsidian 左側功能列的 <strong>🪷 輪寶圖標 (Dharma Chakra Icon)</strong> 即可展開右側對話伴學視窗！"
             ],
             sopTitle: "💡 極簡操作 SOP",
@@ -181,7 +181,7 @@ const LOCALIZATION = {
             installTitle: "📥 Simple 3-Step Installation",
             installSteps: [
                 "<strong>Enable Plugin</strong>: Go to <code>Settings</code> -> <code>Community Plugins</code>, find <strong>DROS Doctrinal Copilot</strong> and enable it.",
-                "<strong>Start Local Backend</strong>: Go to the project root directory and double-click <code>DROS金剛注射器.bat</code> to start the local backend service (not needed for Gemini direct mode).",
+                "<strong>Configure API Key</strong>: Click settings and paste your Gemini API Key (Native TypeScript architecture, no Python needed).",
                 "<strong>Open Copilot Panel</strong>: Click the <strong>🪷 Dharma Chakra Icon</strong> in the left ribbon to expand the chat panel on the right!"
             ],
             sopTitle: "💡 Quick Operation SOP",
