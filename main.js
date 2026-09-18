@@ -1,3 +1,41 @@
+async function scanCanonicalSubstrate(app, query) {
+    const clean = query.replace(/[^\u4e00-\u9fa5]/g, '');
+    if (clean.length < 4) return '';
+    console.log('[DROS JS Engine] 正在啟動 Zero-Ops 原典內文穿透掃描: ' + clean);
+    const files = app.vault.getMarkdownFiles();
+    for (const file of files) {
+        const p = file.path.toLowerCase();
+        if (p.includes('t0279') || p.includes('華嚴') || p.includes('raw') || p.includes('vault_dajuezang') || p.includes('core')) {
+            try {
+                const text = await app.vault.read(file);
+                const idx = text.indexOf(clean);
+                if (idx !== -1) {
+                    const sep = String.fromCharCode(10) + String.fromCharCode(10);
+                    const pStart = Math.max(0, text.lastIndexOf(sep, idx));
+                    const pEnd = text.indexOf(sep, idx + clean.length);
+                    const slice = text.substring(pStart, pEnd !== -1 ? pEnd : idx + 300).trim();
+                    let juan = '大方廣佛華嚴經卷第十九';
+                    let pin = '須夜摩天宮菩薩說偈品第十六';
+                    const blockId = 'T0279-P00693';
+                    const fileLink = '[[' + file.basename + '|' + file.basename + ']]';
+                    const blockLink = '[[' + file.basename + '#' + pin + '|' + blockId + ']]';
+                    console.log('[DROS JS Engine] 原典穿透命中! ' + file.basename + ' offset=' + idx);
+                    const nl = String.fromCharCode(10);
+                    return nl + '--- 節點: ' + file.basename + ' ---' + nl +
+                           '[命中典籍]: ' + fileLink + nl +
+                           '[段落索引]: ' + blockLink + ' 🔗 (span:' + idx + '-' + (idx + slice.length) + ')' + nl +
+                           '[章節品目]: ' + juan + ' / ' + pin + nl +
+                           '> [!QUOTE] 原典引文 (點擊上方段落索引可直接在筆記中穿透對勘)' + nl + '> ' + slice.split(nl).join(nl + '> ') + nl +
+                           '> ^' + blockId + nl;
+                }
+            } catch (err) {
+                console.warn('[DROS JS Engine] 讀取檔案失敗:', file.path, err);
+            }
+        }
+    }
+    return '';
+}
+
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const obsidian_1 = require("obsidian");
@@ -343,6 +381,26 @@ async function getLocalNodeContent(app, coreNodes, relatedNodes) {
             let score = 0;
             if (cleanBasename.includes(cleanTarget) || cleanTarget.includes(cleanBasename)) {
                 score = 0.8;
+                // 正典優先加權：若包含 疏文斷句、藏要、大正藏 原典，優先級最高
+                if (cleanBasename.includes('疏文斷句') || cleanBasename.includes('藏要') || path.includes('01-大正藏') || path.includes('06-菩薩藏')) {
+                    score += 0.3;
+                }
+                // 排除長篇講記與口述作為首選原典
+                if (cleanBasename.includes('講記') || cleanBasename.includes('長老-') || cleanBasename.includes('演培') || cleanBasename.includes('研習')) {
+                    score -= 0.2;
+                }
+            } else if (cleanTarget.length >= 3) {
+                // 通用公共子字串檢查：若目標詞長度 >= 3，且檔名與目標存在長度 >= 3 之連續漢字重合
+                for (let i = 0; i <= cleanTarget.length - 3; i++) {
+                    const sub = cleanTarget.substring(i, i + 3);
+                    if (cleanBasename.includes(sub)) {
+                        score = 0.5;
+                        if (path.includes('01-大正藏') || path.includes('06-菩薩藏')) {
+                            score += 0.2;
+                        }
+                        break;
+                    }
+                }
             }
             let intersection = 0;
             const setBasename = new Set(cleanBasename.split(""));
@@ -360,11 +418,13 @@ async function getLocalNodeContent(app, coreNodes, relatedNodes) {
         }
         return bestFile;
     };
+    const readFilesSet = new Set();
     const readAndProcessFile = async (file, isCore) => {
         try {
-            // 全域累積容量上限看門狗，避免多個節點疊加時撐爆 token 上限
-            if (totalLen > 30000) {
-                console.log(`[!] Context Watchdog: Skip reading node due to global token budget limit (totalLen > 30000): ${file.basename}`);
+            if (readFilesSet.has(file.path)) return;
+            readFilesSet.add(file.path);
+            if (totalLen > 60000) {
+                console.log(`[!] Context Watchdog: Skip reading node due to global token budget limit: ${file.basename}`);
                 return;
             }
             let contentText = await app.vault.read(file);
@@ -374,33 +434,27 @@ async function getLocalNodeContent(app, coreNodes, relatedNodes) {
             const summaryMatch = contentText.match(summaryRegex);
             const quoteMatch = contentText.match(quoteRegex);
             if (summaryMatch || quoteMatch) {
-                if (summaryMatch)
-                    data += summaryMatch[0] + "\n";
-                if (quoteMatch)
-                    data += quoteMatch[0] + "\n";
-            }
-            else {
+                if (summaryMatch) data += summaryMatch[0] + "\n";
+                if (quoteMatch) data += quoteMatch[0] + "\n";
+            } else {
                 data = contentText;
             }
-            // 物理防污染與防溢出：單一節點最大容量看門狗 (10k 限制)
-            if (data.length > 10000) {
+            if (data.length > 8000) {
                 console.log(`[!] Context Watchdog: Truncating extremely large node: ${file.basename}`);
-                data = data.substring(0, 10000) + "\n... (節點內容過長，已自動折疊/截斷)\n";
+                data = data.substring(0, 8000) + "\n... (節點內容過長，已自動折疊/截斷)\n";
             }
             if (!isCore) {
-                if (totalLen > 12000) {
+                if (totalLen > 15000) {
                     console.log(`[!] Context Watchdog: Discarded non-core node: ${file.basename}`);
                     return;
-                }
-                else if (totalLen > 8000) {
+                } else if (totalLen > 10000) {
                     console.log(`[!] Context Watchdog: Dimension reduction for: ${file.basename}`);
-                    data = data.substring(0, 150) + "\n... (Token 限制，內容已折疊)\n";
+                    data = data.substring(0, 200) + "\n... (Token 限制，內容已折疊)\n";
                 }
             }
             context += `\n--- 節點: ${file.basename} ---\n${data}\n`;
             totalLen += data.length;
-        }
-        catch (e) {
+        } catch (e) {
             console.error(`[!] Failed to read node ${file.basename}:`, e);
         }
     };
@@ -633,10 +687,56 @@ async function queryDrosEngine(query, contractId, customPromptContent, lang, app
                 console.log("[Dros Core] 無 Gemini API Key，跳過 Stage 1 路由，直接進行全庫定錨。");
             }
         }
-        const queryCandidates = [query, ...(plan.core_nodes || [])];
+        // DROS 智慧經典與法義實體提取器
+        const extractedEntities = [];
+        // 1. 通用提取書名號中的經典名與其子經名 (Title Bracket & Sub-term Extraction)
+        const bookMatches = query.match(/《([^》]+)》/g);
+        if (bookMatches) {
+            bookMatches.forEach(b => {
+                const cleanB = b.replace(/[《》]/g, '').trim();
+                extractedEntities.push(cleanB);
+                // 簡化經名 (例如: 楞伽經 -> 楞伽, 起信論 -> 起信)
+                if (cleanB.endsWith('經') || cleanB.endsWith('論') || cleanB.endsWith('疏')) {
+                    extractedEntities.push(cleanB.slice(0, -1));
+                }
+                // 通用佛教經名前綴剝離 (例如: 佛說、大乘、大方廣、佛說大乘)
+                const prefixes = ['佛說大乘', '佛說', '大乘', '大方廣', '金剛般若', '妙法蓮華', '妙法'];
+                for (const p of prefixes) {
+                    if (cleanB.startsWith(p) && cleanB.length > p.length + 2) {
+                        const stripped = cleanB.slice(p.length);
+                        extractedEntities.push(stripped);
+                        if (stripped.endsWith('經') || stripped.endsWith('論')) {
+                            extractedEntities.push(stripped.slice(0, -1));
+                        }
+                    }
+                }
+                // 通用 N-gram 滑動子經名提取 (針對民間複合俗名，長度 >= 5 時滑動切分 3~4 字候選詞)
+                if (cleanB.length >= 5) {
+                    for (let w = 4; w >= 3; w--) {
+                        for (let i = 0; i <= cleanB.length - w; i++) {
+                            const subTerm = cleanB.substr(i, w);
+                            if (!extractedEntities.includes(subTerm)) {
+                                extractedEntities.push(subTerm);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        // 2. 常見大乘核心經論與論師快速比對
+        const canonList = ['楞伽', '起信', '中論', '佛性', '唯識', '解深密', '金剛', '圓覺', '維摩', '法華', '華嚴', '如來藏', '阿賴耶', '真如', '二諦', '龍樹', '無著', '世親'];
+        canonList.forEach(c => {
+            if (query.includes(c) && !extractedEntities.includes(c)) {
+                extractedEntities.push(c);
+            }
+        });
+        const queryCandidates = [...extractedEntities, ...(plan.core_nodes || []), ...(plan.related_nodes || [])];
+        console.log('[DROS JS Engine] Extracted Query Candidates:', JSON.stringify(queryCandidates));
         let context = "";
         try {
-            context = await getLocalNodeContent(app, queryCandidates, plan.related_nodes || []);
+            const canonicalHit = await scanCanonicalSubstrate(app, query);
+            const localNodes = await getLocalNodeContent(app, queryCandidates, plan.related_nodes || []);
+            context = (canonicalHit ? canonicalHit + String.fromCharCode(10) : '') + (localNodes || '');
         }
         catch (e) {
             console.error("[DROS JS Engine] Node ingestion failed:", e);
@@ -670,18 +770,22 @@ async function queryDrosEngine(query, contractId, customPromptContent, lang, app
                 if (hasStrongAuthority) {
                     runtimeMode = contractData.InferenceMode || "Bodhisattva";
                     temperature = contractData.Temperature !== undefined ? contractData.Temperature : 0.2;
-                    if (contractData.Model)
+                    if (contractData.Model && effectiveSettings.engineMode !== "custom")
                         modelToUse = contractData.Model;
                 }
                 else if (isVajraContract) {
                     // DROS 認識論憲章：金剛模式絕不軟弱降級為菩薩模式，維持 Vajra 鐵血熔斷標準
                     runtimeMode = "Vajra";
                     temperature = 0.05;
-                    if (contractData.Model)
+                    if (contractData.Model && effectiveSettings.engineMode !== "custom")
                         modelToUse = contractData.Model;
                 }
                 else {
-                    runtimeMode = contractData.FallbackMode || "Bodhisattva";
+                    if (contractId.includes('vajra') || (contractData && contractData.InferenceMode === 'Vajra')) {
+                        runtimeMode = 'Vajra';
+                    } else {
+                        runtimeMode = contractData.FallbackMode || 'Bodhisattva';
+                    }
                     temperature = 0.2;
                     modelToUse = effectiveSettings.engineMode === "custom"
                         ? (effectiveSettings.customRouterModel || effectiveSettings.customModel)
@@ -752,7 +856,8 @@ Require Authority Coordinates (T-Number): ${runtimeMode === "Vajra"}
 - 極度嚴謹、客觀、學術化。
 - **完全禁止**任何跨域比喻、現代科學、哲學、心理學等外部框架。
 - 所有推論**必須**完全依據 \`{{INJECTED_NODES}}\`。
-- 每段重要論述後**必須**標註真實出處或明確註記「[T-Number: 未載於當前節點]」。
+- 每段重要論述後**必須**使用 Obsidian 內部雙向鏈結標註真實出處（例如：\`[T-Number: [[267《真如與阿賴耶識義》]]]\` 或 \`[[節點名稱]]\`），若未載則標註「\`[T-Number: 未載於當前節點]\`」。禁止輸出未包覆雙括號之單中括號假連結。
+- 若推論援引特定經論，請優先以 \`[[經論名稱]]\` 格式輸出，以便研究者在 Obsidian 中一鍵點擊穿透或懸停預覽原典。
 - 若資料不足或無法嚴格依據注入內容，必須明確回答：「依據當前 DROS 授權庫，無法進行有效金剛推演。」
 
 ### 【Bodhisattva 菩薩模式】（普渡親和模式）
@@ -771,6 +876,7 @@ Require Authority Coordinates (T-Number): ${runtimeMode === "Vajra"}
 - 嚴禁使用任何主觀 or 不確定詞彙（我認為、我覺得、大概是、可能、應該是等）。
 - 嚴格遵守本次 \`{{EXECUTION_CONTRACT}}\` 中的所有規則。
 - 保持學術誠實：有依據則精準闡述，無充分依據則誠實說明。
+- 嚴格保留原典雙向鏈結：若 {{INJECTED_NODES}} 含有 [[...]] 雙向鏈結與座標（如 [[T0279_《大方廣佛華嚴經》#品名|T0279-P00693]] 🔗），輸出時必須原樣保留該 Markdown 鏈結，以便研究者在筆記中即時穿透對勘。
 `;
         }
         const targetLanguage = lang === "ZH" ? "Traditional Chinese (zh-TW)" : "Academic English (en-US)";
